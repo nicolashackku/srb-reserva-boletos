@@ -1,0 +1,83 @@
+@startuml d3_clases
+!pragma layout elk
+!include ../diagramas/estilo.iuml
+skinparam dpi 170
+skinparam defaultFontSize 11
+skinparam classAttributeIconSize 0
+hide circle
+hide empty members
+
+class ClienteSRB {
+  - id_cliente
+  + consultar(mes, anio)
+  + reservar(id_evento, fecha, n)
+  + modificar(id_reserva, ...)
+  + cancelar(id_reserva)
+}
+class GeneradorCarga {
+  - solicitudes_por_minuto
+  - mezcla
+  + ejecutar()
+}
+class MetricasCliente {
+  + registrar(op, latencia, estado)
+  + resumen()
+}
+class GestorTransacciones {
+  - frontend : ROUTER
+  - backend : DEALER
+  + iniciar()
+}
+class ContadorTPM {
+  + registrar(op, estado)
+  + exportar_csv()
+}
+class ServicioRMC {
+  + atender(msg)
+}
+class ServicioCancelaciones {
+  + procesar_cancelacion(msg)
+}
+class Notificador {
+  + notificar(endpoint, msg)
+}
+class ClientePersistencia {
+  + solicitar(accion, datos)
+}
+class ServicioPersistencia {
+  + despachar(msg)
+}
+class RepositorioSRB {
+  + eventos_del_mes(mes, anio)
+  + disponibilidad(evento, fecha)
+  + crear_reserva(...)
+  + cancelar_reserva(id)
+}
+class Evento {
+  id_evento
+  num_ocurrencias
+}
+class Ocurrencia {
+  fecha
+  capacidad
+  ocupados
+}
+class Reserva {
+  id_reserva
+  id_cliente
+  asientos
+  estado
+}
+
+GeneradorCarga --> ClienteSRB
+ClienteSRB *-- MetricasCliente
+GestorTransacciones *-- ContadorTPM
+ServicioRMC *-- ClientePersistencia
+ServicioCancelaciones *-- ClientePersistencia
+ServicioCancelaciones *-- Notificador
+ServicioPersistencia --> RepositorioSRB
+RepositorioSRB ..> Evento
+RepositorioSRB ..> Reserva
+Evento *-- "1..2" Ocurrencia
+Reserva --> Ocurrencia
+@enduml

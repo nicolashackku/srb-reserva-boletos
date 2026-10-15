@@ -1,0 +1,40 @@
+@startuml secuencia_cancelacion
+!include estilo.iuml
+title Diagrama de Secuencia – Cancelación de reserva (asíncrona)
+autonumber
+
+box "Máquina 1" #F9F3FC
+  participant "ClienteSRB\n(PUSH)" as CLI
+  participant "Hilo notificaciones\n(PULL :600x)" as HN
+end box
+box "Máquina 2" #F3F8FC
+  participant "GestorTransacciones\n(PULL/PUSH)" as GT
+  participant "ServicioCancelaciones\n(PULL)" as CAN
+  participant "Notificador\n(PUSH)" as NOT
+  participant "ServicioPersistencia\n(REP)" as PER
+  database "srb.db" as DB
+end box
+
+CLI ->> GT : [PUSH] {op: CANCELACION, id_cliente, id_solicitud,\ndatos:{id_reserva},\nendpoint_notificacion: "tcp://192.168.1.10:600x"}
+activate GT
+note over CLI, HN : El envío no bloquea: el cliente\ncontinúa con sus demás solicitudes.
+GT -> GT : contador.registrar(CANCELACION)
+GT ->> CAN : [PUSH] solicitud de cancelación
+deactivate GT
+
+activate CAN
+CAN -> PER : [REQ] {accion: CANCELAR_RESERVA, datos:{id_reserva, id_cliente}}
+activate PER
+PER -> DB : BEGIN; UPDATE reserva SET estado='CANCELADA';\nocupados = ocupados - asientos; COMMIT
+PER --> CAN : {estado: OK | RECHAZADA, datos:{asientos_liberados}}
+deactivate PER
+CAN -> NOT : notificar(endpoint_notificacion, notificacion)
+activate NOT
+NOT -> NOT : obtener o crear socket PUSH\nconectado al endpoint
+NOT ->> HN : [PUSH] {tipo: NOTIFICACION_CANCELACION, id_solicitud,\nid_reserva, estado, asientos_liberados}
+deactivate NOT
+deactivate CAN
+activate HN
+HN -> HN : registrar notificación y mostrarla
+deactivate HN
+@enduml

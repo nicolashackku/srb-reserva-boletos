@@ -1,0 +1,67 @@
+@startuml secuencia_modificacion
+!include estilo.iuml
+title Diagrama de Secuencia – Modificación de reserva (síncrona)
+autonumber
+
+box "Máquina 1" #F9F3FC
+  participant "ClienteSRB\n(REQ)" as CLI
+end box
+box "Máquina 2" #F3F8FC
+  participant "GestorTransacciones\n(ROUTER/DEALER)" as GT
+  participant "ServicioRMC\n(REP)" as RMC
+  participant "ServicioPersistencia\n(REP)" as PER
+  database "srb.db" as DB
+end box
+
+CLI -> GT : [REQ] {op: MODIFICACION, id_cliente, id_solicitud,\ndatos:{id_reserva, asientos | nueva_fecha}}
+activate CLI
+activate GT
+GT -> GT : contador.registrar(MODIFICACION)
+GT -> RMC : [DEALER] [id_ruta, "", solicitud]
+deactivate GT
+activate RMC
+RMC -> PER : [REQ] {accion: OBTENER_RESERVA, datos:{id_reserva}}
+activate PER
+PER -> DB : SELECT reserva
+PER --> RMC : {estado: OK, datos: reserva}
+deactivate PER
+
+alt reserva inexistente, cancelada o de otro cliente
+  RMC --> GT : [REP] {estado: RECHAZADA, motivo}
+else cambio en el número de asientos (misma ocurrencia)
+  RMC -> PER : [REQ] {accion: DISPONIBILIDAD, datos:{id_evento, fecha}}
+  activate PER
+  PER --> RMC : {libres}
+  deactivate PER
+  alt nuevos - actuales <= libres
+    RMC -> PER : [REQ] {accion: MODIFICAR_RESERVA, datos:{id_reserva, asientos}}
+    activate PER
+    PER -> DB : BEGIN; ajustar ocupados (+/- diferencia);\nUPDATE reserva; COMMIT
+    PER --> RMC : {estado: OK, datos: reserva}
+    deactivate PER
+    RMC --> GT : [REP] {estado: OK}
+  else sin cupo
+    RMC --> GT : [REP] {estado: RECHAZADA}
+  end
+else cambio de fecha (conserva asientos)
+  RMC -> PER : [REQ] {accion: DISPONIBILIDAD, datos:{id_evento, nueva_fecha}}
+  activate PER
+  PER --> RMC : {libres} o RECHAZADA si el evento\nno tiene otra ocurrencia en el mes
+  deactivate PER
+  alt ocurrencia existe y asientos <= libres
+    RMC -> PER : [REQ] {accion: MODIFICAR_RESERVA, datos:{id_reserva, nueva_fecha}}
+    activate PER
+    PER -> DB : BEGIN; liberar en fecha actual;\nocupar en nueva fecha; UPDATE reserva; COMMIT
+    PER --> RMC : {estado: OK, datos: reserva}
+    deactivate PER
+    RMC --> GT : [REP] {estado: OK}
+  else sin otra ocurrencia en el mes o sin cupo
+    RMC --> GT : [REP] {estado: RECHAZADA}\n(la reserva queda como estaba)
+  end
+end
+deactivate RMC
+activate GT
+GT --> CLI : [ROUTER] [id_ruta, "", respuesta]
+deactivate GT
+deactivate CLI
+@enduml

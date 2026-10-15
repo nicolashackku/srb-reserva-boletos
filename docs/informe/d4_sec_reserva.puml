@@ -1,0 +1,26 @@
+@startuml d4_sec_reserva
+!include ../diagramas/estilo.iuml
+skinparam dpi 170
+skinparam defaultFontSize 11
+hide footbox
+participant "Cliente\n(REQ)" as C
+participant "Gestor\n(ROUTER/DEALER)" as G
+participant "RMC\n(REP)" as R
+participant "Persistencia\n(REP)" as P
+database "srb.db" as D
+
+C -> G : RESERVA(evento, fecha, n)
+G -> R : reenvía con la identidad del cliente
+R -> P : DISPONIBILIDAD(evento, fecha)
+P -> D : SELECT capacidad - ocupados
+P --> R : libres
+alt libres ≥ n
+  R -> P : CREAR_RESERVA
+  P -> D : BEGIN; UPDATE … WHERE libres ≥ n; INSERT; COMMIT
+  P --> R : OK + id_reserva
+  R --> G : OK
+else sin cupo o evento inexistente
+  R --> G : RECHAZADA
+end
+G --> C : respuesta (Éxito / Rechazo)
+@enduml

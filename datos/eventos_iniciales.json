@@ -1,0 +1,656 @@
+{
+ "mes": 11,
+ "anio": 2026,
+ "eventos": [
+  {
+   "id_evento": "E1",
+   "nombre": "Evento 1",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-02",
+     "capacidad": 100,
+     "ocupados": 0
+    },
+    {
+     "fecha": "2026-11-16",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E2",
+   "nombre": "Evento 2",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-03",
+     "capacidad": 100,
+     "ocupados": 0
+    },
+    {
+     "fecha": "2026-11-17",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E3",
+   "nombre": "Evento 3",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-04",
+     "capacidad": 100,
+     "ocupados": 0
+    },
+    {
+     "fecha": "2026-11-18",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E4",
+   "nombre": "Evento 4",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-05",
+     "capacidad": 100,
+     "ocupados": 0
+    },
+    {
+     "fecha": "2026-11-19",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E5",
+   "nombre": "Evento 5",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-06",
+     "capacidad": 100,
+     "ocupados": 0
+    },
+    {
+     "fecha": "2026-11-20",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E6",
+   "nombre": "Evento 6",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-07",
+     "capacidad": 100,
+     "ocupados": 0
+    },
+    {
+     "fecha": "2026-11-21",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E7",
+   "nombre": "Evento 7",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-08",
+     "capacidad": 100,
+     "ocupados": 0
+    },
+    {
+     "fecha": "2026-11-22",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E8",
+   "nombre": "Evento 8",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-09",
+     "capacidad": 100,
+     "ocupados": 0
+    },
+    {
+     "fecha": "2026-11-23",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E9",
+   "nombre": "Evento 9",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-10",
+     "capacidad": 100,
+     "ocupados": 0
+    },
+    {
+     "fecha": "2026-11-24",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E10",
+   "nombre": "Evento 10",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-11",
+     "capacidad": 100,
+     "ocupados": 0
+    },
+    {
+     "fecha": "2026-11-25",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E11",
+   "nombre": "Evento 11",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-12",
+     "capacidad": 100,
+     "ocupados": 0
+    },
+    {
+     "fecha": "2026-11-26",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E12",
+   "nombre": "Evento 12",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-13",
+     "capacidad": 100,
+     "ocupados": 0
+    },
+    {
+     "fecha": "2026-11-27",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E13",
+   "nombre": "Evento 13",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-14",
+     "capacidad": 100,
+     "ocupados": 0
+    },
+    {
+     "fecha": "2026-11-28",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E14",
+   "nombre": "Evento 14",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-01",
+     "capacidad": 100,
+     "ocupados": 0
+    },
+    {
+     "fecha": "2026-11-15",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E15",
+   "nombre": "Evento 15",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-02",
+     "capacidad": 100,
+     "ocupados": 0
+    },
+    {
+     "fecha": "2026-11-16",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E16",
+   "nombre": "Evento 16",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-03",
+     "capacidad": 100,
+     "ocupados": 0
+    },
+    {
+     "fecha": "2026-11-17",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E17",
+   "nombre": "Evento 17",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-04",
+     "capacidad": 100,
+     "ocupados": 0
+    },
+    {
+     "fecha": "2026-11-18",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E18",
+   "nombre": "Evento 18",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-05",
+     "capacidad": 100,
+     "ocupados": 0
+    },
+    {
+     "fecha": "2026-11-19",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E19",
+   "nombre": "Evento 19",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-06",
+     "capacidad": 100,
+     "ocupados": 0
+    },
+    {
+     "fecha": "2026-11-20",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E20",
+   "nombre": "Evento 20",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-07",
+     "capacidad": 100,
+     "ocupados": 0
+    },
+    {
+     "fecha": "2026-11-21",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E21",
+   "nombre": "Evento 21",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-08",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E22",
+   "nombre": "Evento 22",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-09",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E23",
+   "nombre": "Evento 23",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-10",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E24",
+   "nombre": "Evento 24",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-11",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E25",
+   "nombre": "Evento 25",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-12",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E26",
+   "nombre": "Evento 26",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-13",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E27",
+   "nombre": "Evento 27",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-14",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E28",
+   "nombre": "Evento 28",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-01",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E29",
+   "nombre": "Evento 29",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-02",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E30",
+   "nombre": "Evento 30",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-03",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E31",
+   "nombre": "Evento 31",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-04",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E32",
+   "nombre": "Evento 32",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-05",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E33",
+   "nombre": "Evento 33",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-06",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E34",
+   "nombre": "Evento 34",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-07",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E35",
+   "nombre": "Evento 35",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-08",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E36",
+   "nombre": "Evento 36",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-09",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E37",
+   "nombre": "Evento 37",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-10",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E38",
+   "nombre": "Evento 38",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-11",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E39",
+   "nombre": "Evento 39",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-12",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E40",
+   "nombre": "Evento 40",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-13",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E41",
+   "nombre": "Evento 41",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-14",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E42",
+   "nombre": "Evento 42",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-01",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E43",
+   "nombre": "Evento 43",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-02",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E44",
+   "nombre": "Evento 44",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-03",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E45",
+   "nombre": "Evento 45",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-04",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E46",
+   "nombre": "Evento 46",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-05",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E47",
+   "nombre": "Evento 47",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-06",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E48",
+   "nombre": "Evento 48",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-07",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E49",
+   "nombre": "Evento 49",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-08",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  },
+  {
+   "id_evento": "E50",
+   "nombre": "Evento 50",
+   "ocurrencias": [
+    {
+     "fecha": "2026-11-09",
+     "capacidad": 100,
+     "ocupados": 0
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,50 @@
+@startuml despliegue
+!pragma layout smetana
+!include estilo.iuml
+title Diagrama de Despliegue – SRB arquitectura base (2 máquinas)
+
+node "<<device>>\nMáquina 1 – Capa de Consumidores\nIP: 192.168.1.10" as M1 {
+  node "<<execution environment>>\nPython 3.11+ / pyzmq" as EE1 {
+    artifact "cliente.py\n<<proceso>> Cliente C1\nPULL :6001" as C1
+    artifact "cliente.py\n<<proceso>> Cliente C2\nPULL :6002" as C2
+    artifact "cliente.py\n<<proceso>> Cliente Cn\nPULL :600n" as CN
+  }
+  artifact "config.json" as CFG1
+  artifact "carga/*.json\n(scripts de entrada)" as SCR
+  artifact "resultados/metricas_Cx.csv" as MET1
+}
+
+node "<<device>>\nMáquina 2 – Capas de Negocio y Almacenamiento\nIP: 192.168.1.20" as M2 {
+  node "<<execution environment>>\nPython 3.11+ / pyzmq" as EE2 {
+    artifact "gestor_transacciones.py\nROUTER :5555 | PULL :5556" as GT
+    artifact "rmc.py\nREP :5557" as RMC
+    artifact "cancelaciones.py\nPULL :5558" as CAN
+    artifact "persistencia.py\nREP :5559" as PER
+  }
+  database "srb.db\n<<SQLite>>" as DB
+  artifact "config.json" as CFG2
+  artifact "datos/eventos_iniciales.json" as INI
+  artifact "resultados/tpm_gestor.csv" as MET2
+}
+
+C1 --> GT : <<ZeroMQ/TCP>>\nREQ-ROUTER :5555
+C1 ..> GT : <<ZeroMQ/TCP>>\nPUSH-PULL :5556
+C2 --> GT
+CN --> GT
+GT --> RMC : <<ZeroMQ/TCP localhost>>\nDEALER-REP :5557
+GT ..> CAN : <<ZeroMQ/TCP localhost>>\nPUSH-PULL :5558
+RMC --> PER : <<ZeroMQ/TCP localhost>>\nREQ-REP :5559
+CAN --> PER : <<ZeroMQ/TCP localhost>>\nREQ-REP :5559
+PER --> DB : sqlite3
+INI ..> PER : carga inicial
+CAN ..> C1 : <<ZeroMQ/TCP>>\nPUSH-PULL :6001\n(notificación)
+C1 ..> SCR : lee
+C1 ..> MET1 : escribe
+GT ..> MET2 : escribe
+
+note bottom of M2
+  Para la entrega final (3 máquinas), persistencia.py y srb.db
+  se mueven a una Máquina 3: solo cambia la dirección del
+  servicio de persistencia en config.json.
+end note
+@enduml

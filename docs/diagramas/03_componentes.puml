@@ -1,0 +1,54 @@
+@startuml componentes
+!pragma layout elk
+!include estilo.iuml
+title Diagrama de Componentes – SRB arquitectura base
+skinparam InterfaceFontSize 10
+
+package "Capa de Consumidores" {
+  component "Generador de Carga" as GEN
+  component "Cliente SRB" as CLI
+  component "Métricas Cliente" as MCLI
+  interface "INotificacion\n(PULL :600n)" as I_NOT
+}
+
+package "Capa de Servicios de Negocio" {
+  interface "ISincrona\n:5555" as I_SYNC
+  interface "ICancelacion\n:5556" as I_CANC
+  component "Gestor de Transacciones" as GT
+  component "Contador TPM" as TPM
+  interface "IProcesamientoRMC\n(REP :5557)" as I_RMC
+  interface "ICancelacionInterna\n(PULL :5558)" as I_CANINT
+  component "Servicio RMC" as RMC
+  component "Servicio de Cancelaciones\ny Notificaciones" as CAN
+}
+
+package "Capa de Servicios de Almacenamiento" {
+  interface "IPersistencia\n(REP :5559)" as I_PER
+  component "Servicio de Persistencia" as PER
+  component "Repositorio SRB" as REPO
+  database "srb.db" as DB
+}
+
+GEN --> CLI : usa
+CLI --> MCLI : registra latencias
+I_NOT - CLI
+
+CLI ..> I_SYNC : REQ
+CLI ..> I_CANC : PUSH
+I_SYNC -- GT
+I_CANC -- GT
+GT --> TPM : registra
+
+GT ..> I_RMC : DEALER
+GT ..> I_CANINT : PUSH
+I_RMC -- RMC
+I_CANINT -- CAN
+
+RMC ..> I_PER : REQ
+CAN ..> I_PER : REQ
+I_PER -- PER
+PER --> REPO
+REPO --> DB : SQL
+
+CAN ..> I_NOT : PUSH\n(notificación)
+@enduml

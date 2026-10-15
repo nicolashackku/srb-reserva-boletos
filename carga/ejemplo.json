@@ -1,0 +1,6 @@
+[
+  {"operacion": "CONSULTA", "mes": 11, "anio": 2026},
+  {"operacion": "RESERVA", "id_evento": "E5", "fecha": "2026-11-06", "asientos": 2},
+  {"operacion": "RESERVA", "id_evento": "E5", "fecha": "2026-11-06", "asientos": 150},
+  {"operacion": "CONSULTA", "mes": 11, "anio": 2026}
+]

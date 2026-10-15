@@ -1,0 +1,58 @@
+@startuml secuencia_reserva
+!include estilo.iuml
+title Diagrama de Secuencia – Reserva de asientos (síncrona)
+autonumber
+
+box "Máquina 1" #F9F3FC
+  participant "GeneradorCarga" as GEN
+  participant "ClienteSRB\n(REQ)" as CLI
+end box
+box "Máquina 2" #F3F8FC
+  participant "GestorTransacciones\n(ROUTER/DEALER)" as GT
+  participant "ServicioRMC\n(REP)" as RMC
+  participant "ServicioPersistencia\n(REP)" as PER
+  database "srb.db" as DB
+end box
+
+GEN -> CLI : reservar(id_evento, fecha, asientos)
+activate CLI
+CLI -> GT : [REQ] {op: RESERVA, id_cliente, id_solicitud,\ndatos:{id_evento, fecha, asientos}}
+activate GT
+GT -> GT : contador.registrar(RESERVA)
+GT -> RMC : [DEALER] [id_ruta, "", solicitud]
+deactivate GT
+activate RMC
+RMC -> PER : [REQ] {accion: DISPONIBILIDAD, datos:{id_evento, fecha}}
+activate PER
+PER -> DB : SELECT capacidad - ocupados
+DB --> PER : libres
+PER --> RMC : {estado: OK, datos:{libres}}
+deactivate PER
+
+alt libres >= asientos
+  RMC -> PER : [REQ] {accion: CREAR_RESERVA,\ndatos:{id_cliente, id_evento, fecha, asientos}}
+  activate PER
+  PER -> DB : BEGIN IMMEDIATE
+  PER -> DB : UPDATE ocurrencia SET ocupados = ocupados + n\nWHERE capacidad - ocupados >= n
+  alt fila actualizada
+    PER -> DB : INSERT INTO reserva (..., estado='ACTIVA')
+    PER -> DB : COMMIT
+    PER --> RMC : {estado: OK, datos:{id_reserva}}
+    RMC --> GT : [REP] {estado: OK, datos:{id_reserva}}
+  else sin cupo (otro cliente reservó antes)
+    PER -> DB : ROLLBACK
+    PER --> RMC : {estado: RECHAZADA, motivo: "sin disponibilidad"}
+    RMC --> GT : [REP] {estado: RECHAZADA, motivo}
+  end
+  deactivate PER
+else libres < asientos o evento/fecha inexistente
+  RMC --> GT : [REP] {estado: RECHAZADA, motivo: "sin disponibilidad"}
+end
+deactivate RMC
+activate GT
+GT --> CLI : [ROUTER] [id_ruta, "", respuesta]
+deactivate GT
+CLI -> CLI : metricas.registrar(RESERVA, latencia, estado)
+CLI --> GEN : resultado (Éxito / Rechazo)
+deactivate CLI
+@enduml

@@ -1,0 +1,36 @@
+@startuml d2b
+!pragma layout smetana
+!include ../diagramas/estilo.iuml
+skinparam dpi 170
+skinparam defaultFontSize 11
+
+
+package "Capa de consumidores" {
+  component "Generador\nde carga" as GEN
+  component "Cliente SRB" as CLI
+  component "Métricas\ndel cliente" as MC
+}
+package "Capa de servicios de negocio" {
+  component "Gestor de\nTransacciones" as GT
+  component "Contador TPM" as TPM
+  component "Servicio RMC" as RMC
+  component "Cancelaciones y\nNotificaciones" as CAN
+}
+package "Capa de almacenamiento" {
+  component "Servicio de\nPersistencia" as PER
+  component "Repositorio SRB" as REPO
+  database "srb.db" as DB
+}
+
+GEN --> CLI
+CLI --> MC
+CLI --> GT : ISincrona (REQ)\nICancelacion (PUSH)
+GT --> TPM
+GT --> RMC : IProcesamiento\n(DEALER)
+GT ..> CAN : ICancelacionInterna\n(PUSH)
+RMC --> PER : IPersistencia\n(REQ)
+CAN --> PER : IPersistencia\n(REQ)
+CAN ..> CLI : INotificacion (PUSH)
+PER --> REPO
+REPO --> DB
+@enduml

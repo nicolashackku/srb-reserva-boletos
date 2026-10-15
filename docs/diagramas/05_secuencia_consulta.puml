@@ -1,0 +1,41 @@
+@startuml secuencia_consulta
+!include estilo.iuml
+title Diagrama de Secuencia – Consulta de eventos del mes (síncrona)
+autonumber
+
+box "Máquina 1" #F9F3FC
+  participant "GeneradorCarga" as GEN
+  participant "ClienteSRB\n(REQ)" as CLI
+end box
+box "Máquina 2" #F3F8FC
+  participant "GestorTransacciones\n(ROUTER/DEALER)" as GT
+  participant "ServicioRMC\n(REP)" as RMC
+  participant "ServicioPersistencia\n(REP)" as PER
+  database "srb.db" as DB
+end box
+
+GEN -> CLI : consultar(mes, anio)
+activate CLI
+CLI -> GT : [REQ] {op: CONSULTA, id_cliente, id_solicitud, datos:{mes, anio}}
+activate GT
+GT -> GT : contador.registrar(CONSULTA)
+GT -> RMC : [DEALER] [id_ruta, "", solicitud]
+deactivate GT
+activate RMC
+RMC -> PER : [REQ] {accion: EVENTOS_MES, datos:{mes, anio}}
+activate PER
+PER -> DB : SELECT eventos y ocurrencias del mes
+activate DB
+DB --> PER : filas
+deactivate DB
+PER --> RMC : {estado: OK, datos:[eventos con libres/ocupados]}
+deactivate PER
+RMC --> GT : [REP] {id_solicitud, estado: OK, datos:[eventos]}
+deactivate RMC
+activate GT
+GT --> CLI : [ROUTER] [id_ruta, "", respuesta]
+deactivate GT
+CLI -> CLI : metricas.registrar(CONSULTA, latencia)
+CLI --> GEN : lista de eventos
+deactivate CLI
+@enduml

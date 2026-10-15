@@ -1,0 +1,12 @@
+{
+  "mes": 11,
+  "anio": 2026,
+  "bd": "srb.db",
+  "timeout_ms": 5000,
+  "max_asientos_por_reserva": 4,
+  "carpeta_resultados": "resultados",
+  "gestor": { "host": "127.0.0.1", "sync": 5555, "async": 5556 },
+  "rmc": { "host": "127.0.0.1", "rep": 5557 },
+  "cancelaciones": { "host": "127.0.0.1", "pull": 5558 },
+  "persistencia": { "host": "127.0.0.1", "rep": 5559 }
+}

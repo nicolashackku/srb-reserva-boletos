@@ -1,0 +1,224 @@
+@startuml clases
+!pragma layout elk
+!include estilo.iuml
+title Diagrama de Clases – SRB arquitectura base
+skinparam classAttributeIconSize 0
+
+package comun {
+  enum Operacion {
+    CONSULTA
+    RESERVA
+    MODIFICACION
+    CANCELACION
+  }
+  enum Estado {
+    OK
+    RECHAZADA
+    ACEPTADA
+    ERROR
+  }
+  enum AccionPersistencia {
+    EVENTOS_MES
+    DISPONIBILIDAD
+    CREAR_RESERVA
+    OBTENER_RESERVA
+    MODIFICAR_RESERVA
+    CANCELAR_RESERVA
+  }
+  class Config {
+    - valores : dict
+    + {static} cargar(ruta : str) : Config
+    + endpoint(servicio : str, rol : str) : str
+    + obtener(clave : str, defecto) : Any
+  }
+  class Mensaje {
+    + {static} solicitud(op : Operacion, id_cliente : str, id_solicitud : str, datos : dict) : dict
+    + {static} respuesta(id_solicitud : str, estado : Estado, datos : dict, motivo : str) : dict
+    + {static} codificar(msg : dict) : bytes
+    + {static} decodificar(raw : bytes) : dict
+  }
+  class ClientePersistencia {
+    - socket : zmq.REQ
+    - endpoint : str
+    + ClientePersistencia(ctx : zmq.Context, endpoint : str)
+    + solicitar(accion : AccionPersistencia, datos : dict) : dict
+    + cerrar() : void
+  }
+}
+
+package cliente {
+  class ClienteSRB {
+    - id_cliente : str
+    - sock_req : zmq.REQ
+    - sock_cancel : zmq.PUSH
+    - sock_notif : zmq.PULL
+    - endpoint_notif : str
+    - secuencia : int
+    - hilo_notif : Thread
+    + ClienteSRB(id_cliente : str, config : Config, puerto_notif : int)
+    + consultar(mes : int, anio : int) : dict
+    + reservar(id_evento : str, fecha : str, asientos : int) : dict
+    + modificar(id_reserva : int, asientos : int, nueva_fecha : str) : dict
+    + cancelar(id_reserva : int) : void
+    - enviar_sincrona(op : Operacion, datos : dict) : dict
+    - escuchar_notificaciones() : void
+    + cerrar() : void
+  }
+  class GeneradorCarga {
+    - cliente : ClienteSRB
+    - solicitudes_por_minuto : int
+    - mezcla : dict<Operacion, float>
+    - duracion_s : int
+    - script : list<dict>
+    + GeneradorCarga(cliente, spm, mezcla, duracion_s, script)
+    + ejecutar() : void
+    - siguiente_operacion() : dict
+    - esperar_turno(inicio : float, n : int) : void
+  }
+  class MetricasCliente {
+    - registros : list<RegistroLatencia>
+    + registrar(op : Operacion, t_ini : float, t_fin : float, estado : Estado) : void
+    + resumen() : dict
+    + exportar_csv(ruta : str) : void
+  }
+  class RegistroLatencia <<dataclass>> {
+    + operacion : Operacion
+    + t_inicio : float
+    + latencia_ms : float
+    + estado : Estado
+  }
+}
+
+package gestor {
+  class GestorTransacciones {
+    - frontend : zmq.ROUTER
+    - backend : zmq.DEALER
+    - entrada_cancel : zmq.PULL
+    - salida_cancel : zmq.PUSH
+    - poller : zmq.Poller
+    - contador : ContadorTPM
+    + GestorTransacciones(config : Config)
+    + iniciar() : void
+    - enrutar_sincrona(frames : list<bytes>) : void
+    - devolver_respuesta(frames : list<bytes>) : void
+    - enrutar_cancelacion(raw : bytes) : void
+    + detener() : void
+  }
+  class ContadorTPM {
+    - conteos : dict<(int, Operacion), int>
+    - inicio : float
+    + registrar(op : Operacion, estado : Estado) : void
+    + tpm(op : Operacion) : float
+    + exportar_csv(ruta : str) : void
+  }
+}
+
+package rmc {
+  class ServicioRMC {
+    - socket : zmq.REP
+    - persistencia : ClientePersistencia
+    + ServicioRMC(config : Config)
+    + iniciar() : void
+    - atender(msg : dict) : dict
+    - procesar_consulta(msg : dict) : dict
+    - procesar_reserva(msg : dict) : dict
+    - procesar_modificacion(msg : dict) : dict
+  }
+}
+
+package cancelaciones {
+  class ServicioCancelaciones {
+    - entrada : zmq.PULL
+    - persistencia : ClientePersistencia
+    - notificador : Notificador
+    + ServicioCancelaciones(config : Config)
+    + iniciar() : void
+    - procesar_cancelacion(msg : dict) : void
+  }
+  class Notificador {
+    - ctx : zmq.Context
+    - sockets : dict<str, zmq.PUSH>
+    + notificar(endpoint : str, notificacion : dict) : void
+    + cerrar() : void
+  }
+}
+
+package persistencia {
+  class ServicioPersistencia {
+    - socket : zmq.REP
+    - repo : RepositorioSRB
+    + ServicioPersistencia(config : Config, repo : RepositorioSRB)
+    + iniciar() : void
+    - despachar(msg : dict) : dict
+  }
+  class RepositorioSRB {
+    - conexion : sqlite3.Connection
+    + RepositorioSRB(ruta_bd : str)
+    + crear_esquema() : void
+    + eventos_del_mes(mes : int, anio : int) : list<Evento>
+    + disponibilidad(id_evento : str, fecha : str) : int
+    + crear_reserva(id_cliente : str, id_evento : str, fecha : str, asientos : int) : Reserva
+    + obtener_reserva(id_reserva : int) : Reserva
+    + modificar_reserva(id_reserva : int, asientos : int, nueva_fecha : str) : Reserva
+    + cancelar_reserva(id_reserva : int) : Reserva
+    + imprimir_estado() : void
+  }
+  class CargadorDatos {
+    + {static} cargar_por_defecto(repo, mes, anio, n_eventos = 50, n_dobles = 20, capacidad = 100) : void
+    + {static} cargar_desde_archivo(repo, ruta : str) : void
+  }
+  class Evento <<dataclass>> {
+    + id_evento : str
+    + nombre : str
+    + num_ocurrencias : int
+    + ocurrencias : list<Ocurrencia>
+  }
+  class Ocurrencia <<dataclass>> {
+    + id_evento : str
+    + fecha : str
+    + capacidad : int
+    + ocupados : int
+    + libres() : int
+  }
+  class Reserva <<dataclass>> {
+    + id_reserva : int
+    + id_cliente : str
+    + id_evento : str
+    + fecha : str
+    + asientos : int
+    + estado : str
+  }
+}
+
+ClienteSRB ..> Config
+ClienteSRB ..> Mensaje
+ClienteSRB --> MetricasCliente
+GeneradorCarga --> "1" ClienteSRB
+MetricasCliente *-- "*" RegistroLatencia
+
+GestorTransacciones *-- "1" ContadorTPM
+GestorTransacciones ..> Mensaje
+
+ServicioRMC *-- "1" ClientePersistencia
+ServicioRMC ..> Mensaje
+ServicioCancelaciones *-- "1" ClientePersistencia
+ServicioCancelaciones *-- "1" Notificador
+ClientePersistencia ..> AccionPersistencia
+
+ServicioPersistencia --> "1" RepositorioSRB
+CargadorDatos ..> RepositorioSRB
+RepositorioSRB ..> Evento
+RepositorioSRB ..> Reserva
+Evento *-- "1..2" Ocurrencia
+Reserva --> "1" Ocurrencia : asientos en >
+
+Mensaje ..> Operacion
+Mensaje ..> Estado
+
+note right of RepositorioSRB
+  Cada operación de escritura se ejecuta en una
+  transacción SQLite (BEGIN IMMEDIATE) y revalida
+  la disponibilidad antes de actualizar, evitando
+  sobreventa de asientos.
+end note
+@enduml

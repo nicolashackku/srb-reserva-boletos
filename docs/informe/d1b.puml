@@ -1,0 +1,27 @@
+@startuml d1b
+!pragma layout smetana
+!include ../diagramas/estilo.iuml
+skinparam dpi 170
+skinparam defaultFontSize 11
+
+
+node "Máquina 1 – Capa de consumidores" as M1 {
+  artifact "cliente.py\n(C1 … Cn)" as CLI
+}
+node "Máquina 2 – Capas de negocio y almacenamiento" as M2 {
+  artifact "gestor_transacciones.py\nROUTER :5555 | PULL :5556" as GT
+  artifact "rmc.py\nREP :5557" as RMC
+  artifact "cancelaciones.py\nPULL :5558" as CAN
+  artifact "persistencia.py\nREP :5559" as PER
+  database "srb.db\n(SQLite)" as DB
+}
+
+CLI --> GT : REQ → ROUTER\n(síncrono)
+CLI ..> GT : PUSH → PULL\n(cancelación)
+GT --> RMC : DEALER → REP
+GT ..> CAN : PUSH → PULL
+RMC --> PER : REQ → REP
+CAN --> PER : REQ → REP
+PER --> DB : SQL
+CAN ..> CLI : notificación\nPUSH → PULL
+@enduml

@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+srb.db
+srb.db-shm
+srb.db-wal
+resultados/

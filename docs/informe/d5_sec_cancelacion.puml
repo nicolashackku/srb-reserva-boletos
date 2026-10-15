@@ -1,0 +1,19 @@
+@startuml d5_sec_cancelacion
+!include ../diagramas/estilo.iuml
+skinparam dpi 170
+skinparam defaultFontSize 11
+hide footbox
+participant "Cliente\n(PUSH / PULL)" as C
+participant "Gestor\n(PULL / PUSH)" as G
+participant "Cancelaciones\n(PULL)" as K
+participant "Persistencia\n(REP)" as P
+database "srb.db" as D
+
+C ->> G : CANCELACION(id_reserva, endpoint de notificación)
+note right of C : no bloquea; el cliente\nsigue trabajando
+G ->> K : reenvía (pipeline)
+K -> P : CANCELAR_RESERVA(id_reserva)
+P -> D : BEGIN; marcar CANCELADA; liberar asientos; COMMIT
+P --> K : OK + asientos liberados
+K ->> C : notificación (PUSH al PULL del cliente)
+@enduml
